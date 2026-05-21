@@ -1,162 +1,457 @@
+<!--
+  ============================================================
+   GITHUB PROJECT: https://github.com/BoltDev3/About-me
+
+   MIT License
+
+   Copyright (c) 2026 BoltDev3. All rights reserved. 
+   No permission is granted to copy, distribute, or modify any part of this project.
+   ============================================================
+-->
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Work in Progress | About Me</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            /* Darker professional blue theme */
-            background: linear-gradient(135deg, #020617, #0a1435, #0f172a);
-            color: #ffffff;
-            overflow-x: hidden;
-        }
-
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem;
-            box-sizing: border-box;
-        }
-
-        .glass-card {
-            max-width: 600px;
-            padding: 3rem 2rem;
-            /* Glassmorphism effect */
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .hero-anim {
-            animation: fadeIn 1.5s ease-out;
-        }
-
-        /* Scroll Sections & Animations */
-        .scroll-section {
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 4rem 2rem;
-            text-align: center;
-            box-sizing: border-box;
-        }
-
-        .row {
-            display: flex;
-            gap: 2rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .hidden, .hidden-left, .hidden-right {
-            opacity: 0;
-            filter: blur(5px);
-            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        .hidden { transform: translateY(50px); }
-        .hidden-left { transform: translateX(-50px); }
-        .hidden-right { transform: translateX(50px); }
-
-        .show {
-            opacity: 1;
-            filter: blur(0);
-            transform: translate(0);
-        }
-
-        .delay-1 { transition-delay: 200ms; }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: #d1d5db;
-            font-weight: 300;
-        }
-
-        /* Subtle spinning loader to indicate work is happening */
-        .loader {
-            width: 50px;
-            height: 50px;
-            margin: 0 auto 2rem;
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            border-top-color: #38bdf8;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+    <title>Bolt Dev — Creative Developer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/sections.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    <link rel="icon" href="Bolt_Dev_COPYRIGHT.png" type="image/png">
 </head>
 <body>
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="glass-card hero-anim">
-            <div class="loader"></div>
-            <h1>Work in Progress</h1>
-            <p>I'm currently crafting my new professional portfolio. Scroll down to see some upcoming animations!</p>
+
+    <!-- Noise Overlay -->
+    <div class="noise-overlay" aria-hidden="true"></div>
+
+    <!-- Preloader -->
+    <div class="preloader" id="preloader" aria-hidden="true">
+        <div class="preloader-inner">
+            <div class="preloader-counter-wrap">
+                <span class="preloader-counter" id="preloader-counter">0</span>
+                <span class="preloader-counter-sym">%</span>
+            </div>
+            <div class="preloader-bar">
+                <div class="preloader-bar-fill" id="preloader-bar-fill"></div>
+            </div>
+            <span class="preloader-label">INITIALIZING EXPERIENCE</span>
+        </div>
+        <div class="preloader-curtain preloader-curtain--top"></div>
+        <div class="preloader-curtain preloader-curtain--bottom"></div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
+    <div class="cursor-ring" id="cursor-ring" aria-hidden="true">
+        <span class="cursor-ring-label" id="cursor-ring-label"></span>
+    </div>
+
+    <!-- WebGL Canvas -->
+    <canvas id="webgl-canvas" aria-hidden="true"></canvas>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav" aria-label="Main navigation">
+        <div class="nav-logo">
+            <a href="#hero" class="nav-logo-link hover-target">Bolt Dev.</a>
+        </div>
+        <ul class="nav-links" role="list">
+            <li><a href="#about"   class="nav-link hover-target" data-cursor-label="GO">About</a></li>
+            <li><a href="#projects" class="nav-link hover-target" data-cursor-label="GO">Work</a></li>
+            <li><a href="#contact" class="nav-link hover-target" data-cursor-label="TALK">Contact</a></li>
+        </ul>
+        <div class="nav-status">
+            <span class="nav-status-dot"></span>
+            <span class="nav-status-text">Available</span>
+        </div>
+        <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle menu" aria-expanded="false">
+            <span class="mobile-toggle-line"></span>
+            <span class="mobile-toggle-line"></span>
+            <span class="mobile-toggle-line"></span>
+        </button>
+    </nav>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="section hero-section" id="hero">
+        <div class="hero-bg-grid" aria-hidden="true"></div>
+
+        <div class="hero-content">
+            <div class="hero-eyebrow">
+                <span class="hero-eyebrow-line" aria-hidden="true"></span>
+                <span class="hero-eyebrow-text" id="hero-eyebrow-text">HELLO, WORLD.</span>
+                <span class="hero-eyebrow-line" aria-hidden="true"></span>
+            </div>
+
+            <h1 class="hero-title">
+                <span class="hero-title-row" aria-hidden="true">
+                    <span class="char-wrap" data-line="0">I'm</span>
+                </span>
+                <span class="hero-title-row hero-title-row--accent" aria-hidden="true">
+                    <span class="char-wrap" data-line="1">Bolt_Dev</span>
+                </span>
+                <span class="hero-title-row" aria-hidden="true">
+                    <span class="char-wrap" data-line="2"></span>
+                </span>
+                <span class="sr-only">I'm Bolt_Dev</span>
+            </h1>
+
+            <p class="hero-sub">A 13 year old teenager that likes to code.</p>
+
+            <div class="hero-actions">
+                <a href="#projects" class="btn btn--primary magnetic hover-target" data-cursor-label="EXPLORE">
+                    <span class="btn-text">View My Work</span>
+                    <span class="btn-icon" aria-hidden="true">↓</span>
+                </a>
+                <a href="#contact" class="btn btn--ghost magnetic hover-target" data-cursor-label="LET'S GO">
+                    <span class="btn-text">Get in Touch</span>
+                </a>
+            </div>
+
+            <div class="hero-stats" aria-label="Key statistics">
+                <div class="hero-stat">
+                    <div class="hero-stat-top">
+                        <span class="hero-stat-num" data-count-to="5">0</span><span class="hero-stat-sym">+</span>
+                    </div>
+                    <span class="hero-stat-label">Years Exp.</span>
+                </div>
+                <div class="hero-stat-sep" aria-hidden="true">/</div>
+                <div class="hero-stat">
+                    <div class="hero-stat-top">
+                        <span class="hero-stat-num" data-count-to="50">0</span><span class="hero-stat-sym">+</span>
+                    </div>
+                    <span class="hero-stat-label">Projects</span>
+                </div>
+                <div class="hero-stat-sep" aria-hidden="true">/</div>
+                <div class="hero-stat">
+                    <div class="hero-stat-top">
+                        <span class="hero-stat-num" data-count-to="30">0</span><span class="hero-stat-sym">+</span>
+                    </div>
+                    <span class="hero-stat-label">Clients</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-scroll-indicator" aria-hidden="true">
+            <div class="scroll-track"><div class="scroll-thumb"></div></div>
+            <span class="scroll-label">SCROLL</span>
         </div>
     </section>
 
-    <!-- First Scroll Section -->
-    <section class="scroll-section">
-        <h2 class="hidden" style="font-size: 2rem; margin-bottom: 1rem;">What's Coming?</h2>
-        <p class="hidden delay-1" style="max-width: 600px; color: #d1d5db; font-size: 1.1rem; line-height: 1.6;">
-            A fully responsive, highly interactive personal website designed to showcase my projects, skills, and professional journey.
-        </p>
+    <!-- ==================== MARQUEE ==================== -->
+    <div class="marquee-section" aria-hidden="true">
+        <div class="marquee-rail" id="marquee-rail">
+            <div class="marquee-inner">
+                <span class="marquee-word">CREATIVE DEV</span>
+                <span class="marquee-sep">◆</span>
+                <span class="marquee-word">THREE.JS</span>
+                <span class="marquee-sep">◆</span>
+                <span class="marquee-word">GSAP</span>
+                <span class="marquee-sep">◆</span>
+                <span class="marquee-word">REACT</span>
+                <span class="marquee-sep">◆</span>
+                <span class="marquee-word">WEBGL</span>
+                <span class="marquee-sep">◆</span>
+                <span class="marquee-word">UI / UX</span>
+                <span class="marquee-sep">◆</span>
+                <span class="marquee-word">NEXT.JS</span>
+                <span class="marquee-sep">◆</span>
+                <span class="marquee-word">AVAILABLE</span>
+                <span class="marquee-sep">◆</span>
+                <span class="marquee-word">CREATIVE DEV</span>
+                <span class="marquee-sep">◆</span>
+                <span class="marquee-word">THREE.JS</span>
+                <span class="marquee-sep">◆</span>
+                <span class="marquee-word">GSAP</span>
+                <span class="marquee-sep">◆</span>
+                <span class="marquee-word">REACT</span>
+                <span class="marquee-sep">◆</span>
+                <span class="marquee-word">WEBGL</span>
+                <span class="marquee-sep">◆</span>
+                <span class="marquee-word">UI / UX</span>
+                <span class="marquee-sep">◆</span>
+                <span class="marquee-word">NEXT.JS</span>
+                <span class="marquee-sep">◆</span>
+                <span class="marquee-word">AVAILABLE</span>
+                <span class="marquee-sep">◆</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ABOUT ==================== -->
+    <section class="section about-section" id="about">
+        <div class="about-container">
+
+            <div class="about-visual-col">
+                <div class="about-visual-wrap">
+                    <div class="about-blob" id="about-blob" aria-hidden="true"></div>
+                    <div class="about-img-frame">
+                        <div class="about-img-placeholder"></div>
+                    </div>
+                    <div class="about-badge glass">
+                        <span class="about-badge-star">✦</span>
+                        <span class="about-badge-text">2+ Years<br>of Excellence</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-content-col">
+                <div class="section-eyebrow">ABOUT ME</div>
+                <h2 class="about-title split-title">Crafting digital<br>experiences</h2>
+                <h3 class="about-subtitle">The Approach</h3>
+                <p class="about-body lead">I am Bolt Dev a 13 year old kid that likes to code outside from school.</p>
+                <p class="about-body"></p>
+
+                <div class="skill-bars">
+                    <div class="skill-bar-row">
+                        <span class="skill-bar-label">Creative Development</span>
+                        <div class="skill-bar-track">
+                            <div class="skill-bar-fill" data-fill-to="95"></div>
+                        </div>
+                        <span class="skill-bar-pct"> 95%</span>
+                    </div>
+                    <div class="skill-bar-row">
+                        <span class="skill-bar-label">Wails & Go</span>
+                        <div class="skill-bar-track">
+                            <div class="skill-bar-fill" data-fill-to="88"></div>
+                        </div>
+                        <span class="skill-bar-pct"> 88%</span>
+                    </div>
+                    <div class="skill-bar-row">
+                        <span class="skill-bar-label">Pycord</span>
+                        <div class="skill-bar-track">
+                            <div class="skill-bar-fill" data-fill-to="82"></div>
+                        </div>
+                        <span class="skill-bar-pct"> 82%</span>
+                    </div>
+                    <div class="skill-bar-row">
+                        <span class="skill-bar-label">React & Next.js</span>
+                        <div class="skill-bar-track">
+                            <div class="skill-bar-fill" data-fill-to="90"></div>
+                        </div>
+                        <span class="skill-bar-pct"> 90%</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </section>
 
-    <!-- Second Scroll Section with Cards -->
-    <section class="scroll-section row">
-        <div class="glass-card hidden-left" style="max-width: 300px; padding: 2rem;">
-            <h3 style="margin-top: 0; color: #38bdf8;">Professional</h3>
-            <p style="font-size: 1rem; margin-bottom: 0;">Clean code, optimized performance, and modern design principles.</p>
-        </div>
-        <div class="glass-card hidden-right delay-1" style="max-width: 300px; padding: 2rem;">
-            <h3 style="margin-top: 0; color: #38bdf8;">Interactive</h3>
-            <p style="font-size: 1rem; margin-bottom: 0;">Engaging scroll animations that bring the whole page to life.</p>
+    <!-- ==================== SKILLS ==================== -->
+    <section class="section skills-section" id="skills">
+        <div class="skills-container">
+            <div class="section-header">
+                <div class="section-eyebrow">EXPERTISE</div>
+                <h2 class="section-title split-title">My Toolkit</h2>
+                <p class="section-sub">A curated arsenal of modern web technologies, built for impact.</p>
+            </div>
+            <div class="skills-grid">
+                <div class="skill-card glass tilt-card hover-target" data-cursor-label="SKILL">
+                    <div class="skill-card-glow"></div>
+                    <div class="skill-card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--clr-accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                    </div>
+                    <h3 class="skill-card-title">Frontend Dev</h3>
+                    <p class="skill-card-desc">React, Next.js, Vue, and vanilla JS for blazing fast, accessible user interfaces at scale.</p>
+                    <div class="skill-card-tags">
+                        <span class="tag">React</span><span class="tag">Next.js</span><span class="tag">TypeScript</span><span class="tag">Vue</span>
+                    </div>
+                </div>
+                <div class="skill-card glass tilt-card hover-target" data-cursor-label="SKILL">
+                    <div class="skill-card-glow"></div>
+                    <div class="skill-card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--clr-accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                    <h3 class="skill-card-title">Creative Coding</h3>
+                    <p class="skill-card-desc">GSAP, Three.js, and raw WebGL for immersive, award-winning browser experiences.</p>
+                    <div class="skill-card-tags">
+                        <span class="tag">Three.js</span><span class="tag">GSAP</span><span class="tag">WebGL</span><span class="tag">GLSL</span>
+                    </div>
+                </div>
+                <div class="skill-card glass tilt-card hover-target" data-cursor-label="SKILL">
+                    <div class="skill-card-glow"></div>
+                    <div class="skill-card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--clr-accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                    </div>
+                    <h3 class="skill-card-title">UI / UX Design</h3>
+                    <p class="skill-card-desc">Figma prototyping, design systems, and wireframing that bridge design and engineering.</p>
+                    <div class="skill-card-tags">
+                        <span class="tag">Figma</span><span class="tag">Design Sys.</span><span class="tag">Motion</span><span class="tag">Prototyping</span>
+                    </div>
+                </div>
+                <div class="skill-card glass tilt-card hover-target" data-cursor-label="SKILL">
+                    <div class="skill-card-glow"></div>
+                    <div class="skill-card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--clr-accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                    </div>
+                    <h3 class="skill-card-title">Backend & Infra</h3>
+                    <p class="skill-card-desc">Node.js, headless CMS, APIs, and CI/CD pipelines for production-ready, scalable builds.</p>
+                    <div class="skill-card-tags">
+                        <span class="tag">Node.js</span><span class="tag">Sanity</span><span class="tag">Vercel</span><span class="tag">GraphQL</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <script>
-        // Intersection Observer for scroll animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('show');
-                }
-            });
-        });
+    <!-- ==================== PROJECTS ==================== -->
+    <section class="section projects-section" id="projects">
+        <div class="projects-pin" id="projects-pin">
+            <div class="projects-track" id="projects-track">
 
-        // Select all elements with hidden classes and observe them
-        const hiddenElements = document.querySelectorAll('.hidden, .hidden-left, .hidden-right');
-        hiddenElements.forEach((el) => observer.observe(el));
-    </script>
+                <div class="project-intro-panel">
+                    <div class="section-eyebrow">SELECTED WORKS</div>
+                    <h2 class="project-intro-title split-title">
+                        Selected<br><em>Works</em>
+                    </h2>
+                    <p class="project-intro-sub">Drag or scroll to explore →</p>
+                    <div class="project-count-badge">01 — 03</div>
+                </div>
+
+                <article class="project-card-h hover-target" data-cursor-label="VIEW" data-index="01">
+                    <div class="project-card-h-visual">
+                        <div class="project-card-h-img" style="background: linear-gradient(135deg, #0f172a 0%, #1e40af 55%, #06b6d4 100%);"></div>
+                        <div class="project-card-h-overlay">
+                            <a href="#" class="project-view-link magnetic" data-cursor-label="OPEN">View Project ↗</a>
+                        </div>
+                    </div>
+                    <div class="project-card-h-body">
+                        <span class="project-num">01</span>
+                        <h3 class="project-title">E-Commerce Platform</h3>
+                        <p class="project-desc">Headless Shopify build with Next.js, Framer Motion, and real-time inventory management.</p>
+                        <div class="project-tags">
+                            <span class="tag">Next.js</span><span class="tag">Shopify</span><span class="tag">Framer Motion</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="project-card-h hover-target" data-cursor-label="VIEW" data-index="02">
+                    <div class="project-card-h-visual">
+                        <div class="project-card-h-img" style="background: linear-gradient(135deg, #1e1b4b 0%, #6d28d9 55%, #a78bfa 100%);"></div>
+                        <div class="project-card-h-overlay">
+                            <a href="#" class="project-view-link magnetic" data-cursor-label="OPEN">View Project ↗</a>
+                        </div>
+                    </div>
+                    <div class="project-card-h-body">
+                        <span class="project-num">02</span>
+                        <h3 class="project-title">Web3 Dashboard</h3>
+                        <p class="project-desc">Real-time crypto tracking with React, WebSockets, live candlestick charts, and wallet connect.</p>
+                        <div class="project-tags">
+                            <span class="tag">React</span><span class="tag">Web3.js</span><span class="tag">D3.js</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="project-card-h hover-target" data-cursor-label="VIEW" data-index="03">
+                    <div class="project-card-h-visual">
+                        <div class="project-card-h-img" style="background: linear-gradient(135deg, #4a0010 0%, #be185d 55%, #f472b6 100%);"></div>
+                        <div class="project-card-h-overlay">
+                            <a href="#" class="project-view-link magnetic" data-cursor-label="OPEN">View Project ↗</a>
+                        </div>
+                    </div>
+                    <div class="project-card-h-body">
+                        <span class="project-num">03</span>
+                        <h3 class="project-title">Creative Agency</h3>
+                        <p class="project-desc">Awwwards-winning portfolio featuring advanced WebGL typography, shader distortion, and cinematic scroll.</p>
+                        <div class="project-tags">
+                            <span class="tag">Three.js</span><span class="tag">GLSL</span><span class="tag">GSAP</span>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== STATS ==================== -->
+    <section class="section stats-section" id="stats">
+        <div class="stats-container">
+            <div class="stat-block">
+                <div class="stat-big"><span class="stat-counter" data-count-to="50">0</span><span class="stat-sym">+</span></div>
+                <div class="stat-label">Projects Completed</div>
+            </div>
+            <div class="stat-sep" aria-hidden="true"></div>
+            <div class="stat-block">
+                <div class="stat-big"><span class="stat-counter" data-count-to="30">0</span><span class="stat-sym">+</span></div>
+                <div class="stat-label">Happy Clients</div>
+            </div>
+            <div class="stat-sep" aria-hidden="true"></div>
+            <div class="stat-block">
+                <div class="stat-big"><span class="stat-counter" data-count-to="5">0</span><span class="stat-sym">+</span></div>
+                <div class="stat-label">Years Experience</div>
+            </div>
+            <div class="stat-sep" aria-hidden="true"></div>
+            <div class="stat-block">
+                <div class="stat-big"><span class="stat-counter" data-count-to="12">0</span><span class="stat-sym">k</span></div>
+                <div class="stat-label">Lines of Code</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CONTACT ==================== -->
+    <section class="section contact-section" id="contact">
+        <div class="contact-container">
+            <div class="contact-top">
+                <div class="section-eyebrow">GET IN TOUCH</div>
+                <h2 class="contact-headline split-title">
+                    Let's<br><em>create</em><br>together.
+                </h2>
+            </div>
+            <div class="contact-body">
+                <p class="contact-desc">I am currently busy and can't help with anything. Sorry.</p>
+                <a href="mailto:hello@md.dev" class="contact-email-link hover-target magnetic" data-cursor-label="SEND">
+                    <span class="contact-email-text"></span>
+                    <span class="contact-email-arrow" aria-hidden="true"></span>
+                </a>
+                <!-- Discord Presence Card -->
+                <div id="discord-presence" class="discord-presence-card">
+                  <div class="discord-header">
+                    <div class="discord-avatar-wrap">
+                      <img id="discord-avatar" src="" alt="Discord Avatar" class="discord-avatar">
+                      <span id="discord-status-indicator" class="discord-status"></span>
+                    </div>
+                    <div class="discord-user-info">
+                      <span class="discord-title">Discord</span>
+                      <span id="discord-username" class="discord-username"></span>
+                      <div id="discord-badges" class="discord-badges"></div>
+                    </div>
+                  </div>
+                  <div id="discord-activity" class="discord-activity" style="display: none;"></div>
+                </div>
+                <div class="contact-socials">
+                    <a href="https://github.com/BoltDev3/" class="social-link hover-target magnetic" data-cursor-label="OPEN">GitHub</a>
+                </div>
+            </div>
+        </div>
+        <footer class="site-footer">
+            <span>© 2026 BoltDev3. All rights reserved.</span>
+            <span>Built with Love &amp; too much coffee ☕</span>
+        </footer>
+    </section>
+
+    <!-- ====== SCRIPTS ====== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/splitText.js"></script>
+    <script src="js/cursor.js"></script>
+    <script src="js/preloader.js"></script>
+    <script src="js/webgl.js"></script>
+    <script src="js/scroll.js"></script>
+    <script src="js/hero.js"></script>
+    <script src="js/about.js"></script>
+    <script src="js/skills.js"></script>
+    <script src="js/projects.js"></script>
+    <script src="js/mobile-nav.js"></script>
+    <script src="js/contact.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/discord.js"></script>
+    <script src="js/mobile-nav.js"></script>
 </body>
 </html>

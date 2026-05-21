@@ -1,0 +1,616 @@
+/* ============================================================
+   COMPONENTS.CSS — Cursor, Preloader, Nav, Buttons, Marquee
+   ============================================================ */
+
+/* ────────────────────────────────────────────────────────────
+   CUSTOM CURSOR
+   ──────────────────────────────────────────────────────────── */
+.cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 6px; height: 6px;
+  background: var(--clr-white);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: var(--z-cursor);
+  /* Don't use translate(-50%, -50%) here — GSAP does the positioning */
+  will-change: transform;
+  mix-blend-mode: difference;
+  transition: opacity 0.2s ease, width 0.2s ease, height 0.2s ease;
+  opacity: 0; /* Hidden until first mouse move */
+}
+
+.cursor-dot.is-visible { opacity: 1; }
+.cursor-dot.is-hidden  { opacity: 0; }
+
+.cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  width: 42px; height: 42px;
+  border: 1.5px solid rgba(255,255,255,0.45);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: var(--z-cursor);
+  /* GSAP controls position, we just set size + style transitions */
+  will-change: transform;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0; /* hidden until first move */
+  transition: width 0.4s var(--ease-out),
+              height 0.4s var(--ease-out),
+              border-color 0.3s ease,
+              background 0.3s ease,
+              border-radius 0.3s ease,
+              opacity 0.3s ease;
+}
+
+.cursor-ring.is-hovering {
+  width: 70px; height: 70px;
+  background: rgba(var(--clr-accent-rgb), 0.08);
+  border-color: var(--clr-accent);
+}
+
+.cursor-ring.is-clicking {
+  width: 30px; height: 30px;
+  background: rgba(var(--clr-accent-rgb), 0.25);
+}
+
+.cursor-ring.has-label {
+  width: 80px; height: 80px;
+  border-color: var(--clr-accent);
+  background: rgba(var(--clr-accent-rgb), 0.06);
+}
+
+.cursor-ring-label {
+  font-family: var(--font-body);
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--clr-accent);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.cursor-ring.has-label .cursor-ring-label {
+  opacity: 1;
+}
+
+/* ────────────────────────────────────────────────────────────
+   DISCORD PRESENCE
+   ──────────────────────────────────────────────────────────── */
+.discord-presence-card {
+  background: var(--clr-bg-alt);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  max-width: 380px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  /* Hidden by default, revealed by JS */
+  opacity: 0;
+  visibility: hidden;
+}
+
+.discord-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.discord-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.discord-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--clr-border);
+}
+
+.discord-status {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid var(--clr-bg-alt);
+}
+
+.discord-status.online { background: #3ba55d; }
+.discord-status.idle { background: #faa81a; }
+.discord-status.dnd { background: #ed4245; }
+.discord-status.offline { background: #747f8d; }
+
+.discord-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow: hidden;
+}
+
+.discord-username {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--clr-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.discord-title {
+  font-size: 24px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: linear-gradient(90deg, #5865F2 0%, #FFFFFF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.discord-badges {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.discord-badge {
+  width: 22px;
+  height: 22px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.discord-activity {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(0,0,0,0.15);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+}
+
+.discord-activity-cover {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.discord-activity-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow: hidden;
+  font-size: var(--fs-sm);
+}
+
+.discord-activity-details strong {
+  font-weight: 600;
+  color: var(--clr-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.discord-activity-details span {
+  font-weight: 400;
+  color: var(--clr-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.discord-spotify-progress {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.discord-spotify-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.discord-spotify-bar-inner {
+  width: 0%;
+  height: 100%;
+  background: #1DB954; /* Spotify green */
+  border-radius: 2px;
+  transition: width 0.2s linear;
+}
+
+.discord-spotify-times {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  color: var(--clr-text-dim);
+  margin-top: 0.35rem;
+}
+
+/* ────────────────────────────────────────────────────────────
+   PRELOADER
+   ──────────────────────────────────────────────────────────── */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-preloader);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--clr-bg);
+  pointer-events: none; /* will re-enable via JS if needed */
+}
+
+.preloader-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.preloader-counter-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  line-height: 1;
+}
+
+.preloader-counter {
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 12vw, 10rem);
+  font-weight: 800;
+  color: var(--clr-text);
+  letter-spacing: -0.04em;
+  tabular-nums: 1;
+  font-variant-numeric: tabular-nums;
+  display: block;
+  min-width: 2ch;
+  text-align: right;
+}
+
+.preloader-counter-sym {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 400;
+  color: var(--clr-accent);
+  align-self: flex-start;
+  margin-top: 0.5rem;
+}
+
+.preloader-bar {
+  width: clamp(160px, 25vw, 280px);
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+
+.preloader-bar-fill {
+  width: 0%;
+  height: 100%;
+  background: var(--clr-accent);
+  transform-origin: left center;
+  will-change: width;
+}
+
+.preloader-label {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--clr-text-muted);
+}
+
+/* Curtain panels that slide away */
+.preloader-curtain {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: var(--clr-bg);
+  z-index: 1;
+}
+
+.preloader-curtain--top    { top: 0; transform-origin: top; }
+.preloader-curtain--bottom { bottom: 0; transform-origin: bottom; }
+
+/* ────────────────────────────────────────────────────────────
+   NAVIGATION
+   ──────────────────────────────────────────────────────────── */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-nav);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.6rem 4vw;
+  transition: background var(--dur-med) ease, padding var(--dur-med) ease;
+  will-change: transform;
+}
+
+.nav.is-scrolled {
+  background: rgba(3,3,3,0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  padding: 1rem 4vw;
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.nav-logo-link {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--clr-white);
+  letter-spacing: -0.01em;
+  transition: color var(--dur-fast) ease;
+  position: relative;
+}
+
+.nav-logo-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--clr-accent);
+  transition: width var(--dur-med) var(--ease-out);
+}
+
+.nav-logo-link:hover::after { width: 100%; }
+.nav-logo-link:hover { color: var(--clr-accent); }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.nav-link {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--clr-text-muted);
+  position: relative;
+  transition: color var(--dur-fast) ease;
+  padding-bottom: 0.15rem;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--clr-accent);
+  transition: width var(--dur-med) var(--ease-out);
+}
+
+.nav-link:hover { color: var(--clr-white); }
+.nav-link:hover::after { width: 100%; }
+.nav-link.is-active { color: var(--clr-white); }
+.nav-link.is-active::after { width: 100%; background: var(--clr-accent); }
+
+.nav-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--clr-text-muted);
+}
+
+.nav-status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--clr-accent);
+  animation: statusPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(var(--clr-accent-rgb), 0.6); }
+  50%       { box-shadow: 0 0 0 6px rgba(var(--clr-accent-rgb), 0); }
+}
+
+/* ────────────────────────────────────────────────────────────
+   BUTTONS
+   ──────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.95rem 2.2rem;
+  border-radius: var(--radius-pill);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--dur-fast) var(--ease-elastic),
+              box-shadow var(--dur-med) ease;
+  will-change: transform;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--dur-fast) ease;
+}
+
+.btn:hover::before { opacity: 1; }
+
+.btn--primary {
+  background: var(--clr-accent);
+  color: var(--clr-bg);
+}
+
+.btn--primary::before {
+  background: rgba(255,255,255,0.12);
+}
+
+.btn--primary:hover {
+  box-shadow: 0 0 30px rgba(var(--clr-accent-rgb), 0.35),
+              0 0 60px rgba(var(--clr-accent-rgb), 0.15);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--clr-text);
+  border: 1px solid var(--clr-border);
+}
+
+.btn--ghost::before { background: rgba(255,255,255,0.04); }
+
+.btn--ghost:hover {
+  border-color: rgba(255,255,255,0.2);
+}
+
+.btn-icon {
+  display: inline-block;
+  transition: transform 0.3s var(--ease-elastic);
+}
+
+.btn:hover .btn-icon {
+  transform: translateY(3px);
+}
+
+/* Magnetic wrapper for GSAP magnetic effect */
+.magnetic {
+  position: relative;
+}
+
+/* ────────────────────────────────────────────────────────────
+   MARQUEE
+   ──────────────────────────────────────────────────────────── */
+.marquee-section {
+  position: relative;
+  overflow: hidden;
+  padding: 1.8rem 0;
+  border-top: 1px solid var(--clr-border);
+  border-bottom: 1px solid var(--clr-border);
+  background: var(--clr-bg-alt);
+}
+
+.marquee-rail {
+  display: flex;
+  overflow: hidden;
+}
+
+.marquee-inner {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  white-space: nowrap;
+  will-change: transform;
+  animation: marqueeScroll 28s linear infinite;
+}
+
+.marquee-word {
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--clr-text-muted);
+  transition: color 0.3s ease;
+}
+
+.marquee-word:hover { color: var(--clr-text); }
+
+.marquee-sep {
+  font-size: 0.5rem;
+  color: var(--clr-accent);
+  flex-shrink: 0;
+}
+
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Reverse marquee option */
+.marquee-rail--reverse .marquee-inner {
+  animation-direction: reverse;
+}
+
+/* Pause on hover */
+.marquee-section:hover .marquee-inner {
+  animation-play-state: paused;
+}
+
+/* ────────────────────────────────────────────────────────────
+   SCROLL INDICATOR
+   ──────────────────────────────────────────────────────────── */
+.hero-scroll-indicator {
+  position: absolute;
+  right: 2rem;
+  bottom: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.scroll-track {
+  width: 1px;
+  height: 60px;
+  background: rgba(255,255,255,0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-thumb {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 40%;
+  background: var(--clr-accent);
+  animation: scrollThumbAnim 2s ease-in-out infinite;
+}
+
+@keyframes scrollThumbAnim {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(260%); opacity: 0; }
+}
+
+.scroll-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--clr-text-dim);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
