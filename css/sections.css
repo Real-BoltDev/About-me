@@ -896,6 +896,29 @@
   z-index: 1;
 }
 
+.footer-views {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  color: var(--clr-text-muted);
+}
+
+.views-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--clr-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--clr-accent);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.4; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+
 /* ────────────────────────────────────────────────────────────
    RESPONSIVE OVERRIDES
    ──────────────────────────────────────────────────────────── */

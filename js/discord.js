@@ -20,10 +20,13 @@ class DiscordPresence {
     if (!this.el) return;
 
     // DOM elements
+    this.bannerEl = DOM.qs('#discord-banner', this.el);
     this.avatarEl = DOM.qs('#discord-avatar', this.el);
     this.statusIndicatorEl = DOM.qs('#discord-status-indicator', this.el);
+    this.displayNameEl = DOM.qs('#discord-display-name', this.el);
     this.usernameEl = DOM.qs('#discord-username', this.el);
     this.badgesEl = DOM.qs('#discord-badges', this.el);
+    this.customStatusEl = DOM.qs('#discord-custom-status', this.el);
     this.activityEl = DOM.qs('#discord-activity', this.el);
 
     this.socket = null;
@@ -86,20 +89,73 @@ class DiscordPresence {
   _update(data) {
     if (!data || !data.discord_user) return;
 
+    // Update banner
+    if (this.bannerEl) {
+      if (data.discord_user.banner) {
+        const isGif = data.discord_user.banner.startsWith('a_');
+        const bannerUrl = `https://cdn.discordapp.com/banners/${this.discordId}/${data.discord_user.banner}.${isGif ? 'gif' : 'png'}?size=480`;
+        this.bannerEl.style.backgroundImage = `url(${bannerUrl})`;
+        this.bannerEl.style.backgroundColor = '';
+      } else if (data.discord_user.accent_color) {
+        const hexColor = '#' + data.discord_user.accent_color.toString(16).padStart(6, '0');
+        this.bannerEl.style.backgroundImage = '';
+        this.bannerEl.style.backgroundColor = hexColor;
+      } else {
+        this.bannerEl.style.backgroundImage = '';
+        this.bannerEl.style.backgroundColor = ''; // CSS gradient takes over
+      }
+    }
+
     // Update avatar
     const avatarHash = data.discord_user.avatar;
-    const avatarUrl = `https://cdn.discordapp.com/avatars/${this.discordId}/${avatarHash}.${avatarHash.startsWith('a_') ? 'gif' : 'png'}?size=128`;
-    if (this.avatarEl.src !== avatarUrl) this.avatarEl.src = avatarUrl;
+    if (avatarHash) {
+      const isGif = avatarHash.startsWith('a_');
+      const avatarUrl = `https://cdn.discordapp.com/avatars/${this.discordId}/${avatarHash}.${isGif ? 'gif' : 'png'}?size=128`;
+      if (this.avatarEl.src !== avatarUrl) this.avatarEl.src = avatarUrl;
+    } else {
+      const defaultAvatarNum = parseInt(data.discord_user.discriminator || '0') % 5;
+      const avatarUrl = `https://cdn.discordapp.com/embed/avatars/${defaultAvatarNum}.png`;
+      if (this.avatarEl.src !== avatarUrl) this.avatarEl.src = avatarUrl;
+    }
 
-    // Update username
-    this.usernameEl.textContent = `${data.discord_user.username}`;
+    // Update username & display name
+    if (this.displayNameEl) {
+      this.displayNameEl.textContent = data.discord_user.global_name || data.discord_user.username;
+    }
+    this.usernameEl.textContent = `@${data.discord_user.username}`;
 
     // Update status
     this.statusIndicatorEl.className = 'discord-status'; // Reset
     DOM.addClass(this.statusIndicatorEl, data.discord_status);
 
     this._updateBadges(data.discord_user.public_flags);
+    this._updateCustomStatus(data);
     this._updateActivity(data);
+  }
+
+  _updateCustomStatus(data) {
+    if (!this.customStatusEl) return;
+    const customStatus = data.activities.find(a => a.type === 4);
+    
+    if (customStatus) {
+      this.customStatusEl.style.display = 'flex';
+      let statusHtml = '';
+      if (customStatus.emoji) {
+        if (customStatus.emoji.id) {
+          const isAnimated = customStatus.emoji.animated;
+          statusHtml += `<img src="https://cdn.discordapp.com/emojis/${customStatus.emoji.id}.${isAnimated ? 'gif' : 'png'}?size=32" alt="${customStatus.emoji.name}" class="discord-status-emoji">`;
+        } else if (customStatus.emoji.name) {
+          statusHtml += `<span class="discord-status-emoji">${customStatus.emoji.name}</span>`;
+        }
+      }
+      if (customStatus.state) {
+        statusHtml += `<span class="discord-status-text">${customStatus.state}</span>`;
+      }
+      this.customStatusEl.innerHTML = statusHtml;
+    } else {
+      this.customStatusEl.style.display = 'none';
+      this.customStatusEl.innerHTML = '';
+    }
   }
 
   _updateActivity(data) {
@@ -136,7 +192,11 @@ class DiscordPresence {
       let cover = '';
       if (activity.assets && activity.assets.large_image) {
         const assetId = activity.assets.large_image;
-        cover = `<img src="https://cdn.discordapp.com/app-assets/${activity.application_id}/${assetId}.png" alt="${activity.name}" class="discord-activity-cover">`;
+        if (assetId.startsWith('mp:external/')) {
+          cover = `<img src="https://media.discordapp.net/${assetId.replace('mp:', '')}" alt="${activity.name}" class="discord-activity-cover">`;
+        } else {
+          cover = `<img src="https://cdn.discordapp.com/app-assets/${activity.application_id}/${assetId}.png" alt="${activity.name}" class="discord-activity-cover">`;
+        }
       }
       const html = `
         ${cover}
@@ -170,28 +230,27 @@ class DiscordPresence {
       4194304: 'Active Developer'
     };
     const badgeMap = {
-      1: 'https://raw.githubusercontent.com/Lanyard-Projects/lanyard/main/public/images/badges/staff.svg',
-      2: 'https://raw.githubusercontent.com/Lanyard-Projects/lanyard/main/public/images/badges/partner.svg',
-      4: 'https://raw.githubusercontent.com/Lanyard-Projects/lanyard/main/public/images/badges/hypesquad.svg',
-      8: 'https://raw.githubusercontent.com/Lanyard-Projects/lanyard/main/public/images/badges/bug_hunter_level_1.svg',
-      64: 'https://raw.githubusercontent.com/Lanyard-Projects/lanyard/main/public/images/badges/hypesquad_bravery.svg',
-      128: 'https://raw.githubusercontent.com/Lanyard-Projects/lanyard/main/public/images/badges/hypesquad_brilliance.svg',
-      256: 'https://raw.githubusercontent.com/Lanyard-Projects/lanyard/main/public/images/badges/hypesquad_balance.svg',
-      512: 'https://raw.githubusercontent.com/Lanyard-Projects/lanyard/main/public/images/badges/early_supporter.svg',
-      16384: 'https://raw.githubusercontent.com/Lanyard-Projects/lanyard/main/public/images/badges/bug_hunter_level_2.svg',
-      131072: 'https://raw.githubusercontent.com/Lanyard-Projects/lanyard/main/public/images/badges/verified_developer.svg',
-      262144: 'https://raw.githubusercontent.com/Lanyard-Projects/lanyard/main/public/images/badges/moderator_programs_alumni.svg',
-      4194304: 'https://raw.githubusercontent.com/Lanyard-Projects/lanyard/main/public/images/badges/active_developer.svg'
+      1: 'https://cdn.jsdelivr.net/gh/merlinfuchs/discord-badges/SVG/staff.svg',
+      2: 'https://cdn.jsdelivr.net/gh/merlinfuchs/discord-badges/SVG/partner.svg',
+      4: 'https://cdn.jsdelivr.net/gh/merlinfuchs/discord-badges/SVG/hypesquad.svg',
+      8: 'https://cdn.jsdelivr.net/gh/merlinfuchs/discord-badges/SVG/bug_hunter_level_1.svg',
+      64: 'https://cdn.jsdelivr.net/gh/merlinfuchs/discord-badges/SVG/hypesquad_bravery.svg',
+      128: 'https://cdn.jsdelivr.net/gh/merlinfuchs/discord-badges/SVG/hypesquad_brilliance.svg',
+      256: 'https://cdn.jsdelivr.net/gh/merlinfuchs/discord-badges/SVG/hypesquad_balance.svg',
+      512: 'https://cdn.jsdelivr.net/gh/merlinfuchs/discord-badges/SVG/early_supporter.svg',
+      16384: 'https://cdn.jsdelivr.net/gh/merlinfuchs/discord-badges/SVG/bug_hunter_level_2.svg',
+      131072: 'https://cdn.jsdelivr.net/gh/merlinfuchs/discord-badges/SVG/verified_developer.svg',
+      262144: 'https://cdn.jsdelivr.net/gh/merlinfuchs/discord-badges/SVG/certified_moderator.svg',
+      4194304: 'https://cdn.jsdelivr.net/gh/merlinfuchs/discord-badges/SVG/active_developer.svg'
     };
 
     this.badgesEl.innerHTML = '';
     for (const flag in badgeMap) {
-      // Use bitwise AND to check if the user has this flag
       if ((flags & flag) == flag) {
         const badgeEl = document.createElement('div');
         badgeEl.className = 'discord-badge';
         badgeEl.style.backgroundImage = `url(${badgeMap[flag]})`;
-        badgeEl.title = badgeNameMap[flag] || 'Discord Badge'; // Add tooltip
+        badgeEl.title = badgeNameMap[flag] || 'Discord Badge';
         this.badgesEl.appendChild(badgeEl);
       }
     }

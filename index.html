@@ -410,18 +410,22 @@
                 </a>
                 <!-- Discord Presence Card -->
                 <div id="discord-presence" class="discord-presence-card">
-                  <div class="discord-header">
-                    <div class="discord-avatar-wrap">
-                      <img id="discord-avatar" src="" alt="Discord Avatar" class="discord-avatar">
-                      <span id="discord-status-indicator" class="discord-status"></span>
-                    </div>
-                    <div class="discord-user-info">
-                      <span class="discord-title">Discord</span>
-                      <span id="discord-username" class="discord-username"></span>
+                  <div class="discord-banner" id="discord-banner"></div>
+                  <div class="discord-body-wrap">
+                    <div class="discord-header-row">
+                      <div class="discord-avatar-wrap">
+                        <img id="discord-avatar" src="" alt="Discord Avatar" class="discord-avatar">
+                        <span id="discord-status-indicator" class="discord-status"></span>
+                      </div>
                       <div id="discord-badges" class="discord-badges"></div>
                     </div>
+                    <div class="discord-user-info">
+                      <span id="discord-display-name" class="discord-display-name"></span>
+                      <span id="discord-username" class="discord-username"></span>
+                    </div>
+                    <div id="discord-custom-status" class="discord-custom-status" style="display: none;"></div>
+                    <div id="discord-activity" class="discord-activity" style="display: none;"></div>
                   </div>
-                  <div id="discord-activity" class="discord-activity" style="display: none;"></div>
                 </div>
                 <div class="contact-socials">
                     <a href="https://github.com/BoltDev3/" class="social-link hover-target magnetic" data-cursor-label="OPEN">GitHub</a>
@@ -430,6 +434,10 @@
         </div>
         <footer class="site-footer">
             <span>© 2026 BoltDev3. All rights reserved.</span>
+            <span class="footer-views" id="footer-views">
+                <span class="views-dot"></span>
+                <span class="views-text"><span id="view-count">----</span> views</span>
+            </span>
             <span>Built with Love &amp; too much coffee ☕</span>
         </footer>
     </section>

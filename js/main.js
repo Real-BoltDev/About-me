@@ -76,6 +76,25 @@ class App {
     skip.addEventListener('focus', () => { skip.style.top = '1rem'; });
     skip.addEventListener('blur',  () => { skip.style.top = '-100px'; });
     document.body.prepend(skip);
+
+    this._initViewsCounter();
+  }
+
+  _initViewsCounter() {
+    const viewCountEl = document.getElementById('view-count');
+    if (!viewCountEl) return;
+
+    fetch('https://api.counterapi.dev/v1/boltdev3-aboutme/page-views/up')
+      .then(res => res.json())
+      .then(data => {
+        if (data && typeof data.count === 'number') {
+          viewCountEl.textContent = data.count.toLocaleString();
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching view count:', err);
+        viewCountEl.textContent = '---';
+      });
   }
 }
 
