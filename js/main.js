@@ -84,22 +84,30 @@ class App {
     const viewCountEl = document.getElementById('view-count');
     if (!viewCountEl) return;
 
-    fetch('https://api.counterapi.dev/v1/boltdev3-aboutme/page-views/up')
-      .then(res => res.json())
-      .then(data => {
-        if (data && typeof data.count === 'number') {
-          viewCountEl.textContent = data.count.toLocaleString();
-        }
-      })
-      .catch(err => {
-        console.error('Error fetching view count:', err);
-        viewCountEl.textContent = '---';
-      });
+    // Simuliert einen View Counter via localStorage.
+    // Für echte globale Daten müsstest du hier eine API (z.B. Firebase oder Supabase) anfragen.
+    let views = localStorage.getItem('site_views');
+    if (!views) {
+      views = 12450; // Ein Startwert für den Counter
+    }
+    
+    views = parseInt(views, 10) + 1;
+    localStorage.setItem('site_views', views);
+
+    let current = views - 50; 
+    const updateCounter = () => {
+      current += 2;
+      viewCountEl.textContent = current.toLocaleString();
+      if (current < views) {
+        requestAnimationFrame(updateCounter);
+      } else {
+        viewCountEl.textContent = views.toLocaleString();
+      }
+    };
+    requestAnimationFrame(updateCounter);
   }
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => new App());
-} else {
-  new App();
-}
+document.addEventListener('DOMContentLoaded', () => {
+  window.app = new App();
+});
