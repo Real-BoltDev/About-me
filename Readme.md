@@ -4,10 +4,11 @@
 
 ---
 
-## About the Project
+> [!NOTE]  
+> This portfolio was built to showcase my projects and technical skills.
+> It combines high-end UI/UX design with interactive elements, custom shaders, and GPU-accelerated animations.
 
-This portfolio was built to showcase my projects and technical skills.
-It combines high-end UI/UX design with interactive elements, custom shaders, and GPU-accelerated animations.
+
 
 ### Tech Stack
 
@@ -30,6 +31,11 @@ Desktop applications with Wails (Go) and Discord bots built with Pycord.
 
 ### Modern Web
 Scalable frontend applications using React and Next.js.
+
+---
+
+> [!IMPORTANT]
+> All rights reserved. Licensed under the [License](./LICENSE).
 
 ---
 
